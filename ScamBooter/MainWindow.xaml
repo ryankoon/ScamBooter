@@ -8,6 +8,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Button Content="Trigger Notification" Click="Button_Click" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="0,-12,0,0"/>
+        <Button Content="Check Remote Connection" Click="Test_Remote" HorizontalAlignment="Left" Margin="109,298,0,0" VerticalAlignment="Top" Width="193"/>
 
     </Grid>
 </Window>
