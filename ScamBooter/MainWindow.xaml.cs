@@ -1,6 +1,8 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Interop;
 
 namespace ScamBooter
 {
@@ -10,12 +12,21 @@ namespace ScamBooter
     public partial class MainWindow : Window
     {
         public static NotifyIcon nIcon = new NotifyIcon();
+        private bool _allowOperation = false;
+        private clsGetInputID MouseHandler;
         public MainWindow()
         {
             nIcon.Icon = new Icon(@"Resources\SB.ico");
             InitializeComponent();
-            RemoteInputDetection rid = new RemoteInputDetection();
-            rid.RegisterHooks();
+            GlobalInputDetection globalHooks = new GlobalInputDetection();
+            globalHooks.RegisterHooks();
+            globalHooks.MouseClick += GlobalHooks_MouseClicked;
+            CheckRDPSession();
+        }
+
+        private void GlobalHooks_MouseClicked(object sender, System.EventArgs e)
+        {
+            Handle_Raw_Mouse_Input(sender, null);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -38,7 +49,7 @@ namespace ScamBooter
             });
         }
 
-        private void Test_Remote(object sender, RoutedEventArgs e)
+        private void CheckRDPSession()
         {
             RemoteConnectionDetection rce = new RemoteConnectionDetection();
             bool isRemoteConnection = rce.IsRemoteConnectionActive();
@@ -49,7 +60,49 @@ namespace ScamBooter
             }
             else
             {
-                TriggerNotification("No Remote Connections Detected", "safe", 5000);
+                Debug.Print("No RDP session detected.");
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            MouseHandler = new clsGetInputID(new WindowInteropHelper(this).Handle);
+            ComponentDispatcher.ThreadFilterMessage += ComponentDispatcher_ThreadFilterMessage;
+        }
+
+        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ComponentDispatcher.ThreadFilterMessage -= ComponentDispatcher_ThreadFilterMessage;
+        }
+
+        void ComponentDispatcher_ThreadFilterMessage(ref MSG msg, ref bool handled)
+        {
+            handled = false;
+            if (MouseHandler != null)
+            {
+                int HardID = MouseHandler.GetDeviceID(msg);
+
+                if (HardID > 0)
+                {
+                    _allowOperation = true;
+                }
+                else if (HardID == 0)
+                {
+                    _allowOperation = false;
+                }
+            }
+
+        }
+
+        public void Handle_Raw_Mouse_Input(object sender, RoutedEventArgs e)
+        {
+            if (_allowOperation)
+            {
+                Debug.Print("Local Input");
+            }
+            else
+            {
+                TriggerNotification("Unsafe Remote Input", "DANGER", 5000);
             }
         }
 

@@ -4,21 +4,23 @@ using System.Diagnostics;
 
 namespace ScamBooter
 {
-    public class RemoteInputDetection
+    public class GlobalInputDetection
     {
         MouseHook mouseHook;
         KeyboardHook keyboardHook;
-        public RemoteInputDetection()
+
+        public event EventHandler MouseClick;
+        public GlobalInputDetection()
         {
             mouseHook = new MouseHook();
             keyboardHook = new KeyboardHook();
         }
-        // Create the Mouse Hook
+        //Create the Mouse Hook
 
-        public void RegisterHooks()
+        public KeyboardHook RegisterHooks()
         {
             // Capture mouse events
-            mouseHook.MouseMove += new MouseHook.MouseHookCallback(MouseHook_MouseMove);
+            mouseHook.LeftButtonUp += new MouseHook.MouseHookCallback(MouseHook_LeftButtonUp);
             mouseHook.Install();
 
             // Capture keyboard events
@@ -28,14 +30,18 @@ namespace ScamBooter
 
             // Remove handlers on application close
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
+
+            return keyboardHook;
         }
 
-        private void MouseHook_MouseMove(MouseHook.MSLLHOOKSTRUCT mouseStruct)
+        private void MouseHook_LeftButtonUp(MouseHook.MSLLHOOKSTRUCT mouseStruct)
         {
-            Debug.Print("Mouse x:" + mouseStruct.pt.x.ToString());
-            Debug.Print("Mouse y:" + mouseStruct.pt.y.ToString());
+            OnMouseClick(null);
         }
-
+        protected virtual void OnMouseClick(EventArgs e)
+        {
+            MouseClick?.Invoke(this, e);
+        }
         private void KeyboardHook_KeyDown(KeyboardHook.VKeys key)
         {
             Debug.Print("KeyDown V:" + key.Equals(KeyboardHook.VKeys.KEY_V));
@@ -51,7 +57,7 @@ namespace ScamBooter
             keyboardHook.KeyDown -= new KeyboardHook.KeyboardHookCallback(KeyboardHook_KeyDown);
             keyboardHook.KeyUp -= new KeyboardHook.KeyboardHookCallback(KeyboardHook_KeyUp);
             keyboardHook.Uninstall();
-            mouseHook.MouseMove -= new MouseHook.MouseHookCallback(MouseHook_MouseMove);
+            mouseHook.MouseMove -= new MouseHook.MouseHookCallback(MouseHook_LeftButtonUp);
             mouseHook.Uninstall();
             Debug.Print("Uninstalled global hooks");
         }
