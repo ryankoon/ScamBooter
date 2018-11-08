@@ -1,9 +1,11 @@
 ﻿using ScamBooter.ProtectionComponents;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
+using System.Management;
 
 namespace ScamBooter
 {
@@ -20,6 +22,7 @@ namespace ScamBooter
         {
             nIcon.Icon = new Icon(@"Resources\SB.ico");
             InitializeComponent();
+            InitializeProcEventWatcher();
             GlobalInputDetection globalHooks = new GlobalInputDetection();
             globalHooks.RegisterHooks();
             globalHooks.MouseClick += GlobalHooks_MouseClicked;
@@ -107,6 +110,35 @@ namespace ScamBooter
                 killProcesses.KillRemoteTools();
                 TriggerNotification("Unsafe Remote Input", "DANGER", 5000);
             }
+        }
+
+        private static void InitializeProcEventWatcher()
+        {
+            WqlEventQuery query = new WqlEventQuery("__InstanceCreationEvent", new TimeSpan(0, 0, 1), "TargetInstance isa \"Win32_Process\"");
+            ManagementEventWatcher watcher = new ManagementEventWatcher(query);
+            watcher.EventArrived += new EventArrivedEventHandler(EventArrived);
+            watcher.Start();
+            Debug.WriteLine("Event watcher has been started ...");
+        }
+
+        static void EventArrived(object sender, EventArrivedEventArgs e)
+        {
+            string instanceName = ((ManagementBaseObject)e.NewEvent["TargetInstance"])["Name"].ToString().ToLower();
+            switch (instanceName)
+            {
+                case "cmd.exe":
+                    Debug.WriteLine("Command prompt has been started ...");
+                    break;
+                case "eventvwr.msc":
+                    Debug.WriteLine("Event viewer has been started ...");
+                    break;
+                case "mmc.exe":
+                    Debug.WriteLine("Management console has been started ...");
+                    break;
+                default:
+                    break;
+            }
+            Debug.WriteLine(instanceName);
         }
 
     }
