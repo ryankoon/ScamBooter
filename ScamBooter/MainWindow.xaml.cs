@@ -1,6 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
+using System.Management;
+using System.Diagnostics;
 
 namespace ScamBooter
 {
@@ -14,6 +17,7 @@ namespace ScamBooter
         {
             nIcon.Icon = new Icon(@"SB.ico");
             InitializeComponent();
+            lookForExcel();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -28,6 +32,49 @@ namespace ScamBooter
                 new System.Windows.Forms.ToolStripItem[] {
                 statusMenuItem, disableMenuItem, exitMenuItem
             });
+
+            Process[] processlist = Process.GetProcesses();
+            foreach (Process theprocess in processlist)
+            {
+                //Debug.WriteLine("Process: {0} ID: {1}", theprocess.ProcessName, theprocess.Id);
+                if (theprocess.ProcessName == "ScamBooter")
+                {
+                    Debug.WriteLine("ScamBooter is running!");
+                    break;
+                }
+            }
+
+        }
+
+        private static void lookForExcel()
+        {
+            WqlEventQuery query = new WqlEventQuery("__InstanceCreationEvent", new TimeSpan(0, 0, 1), "TargetInstance isa \"Win32_Process\"");
+            ManagementEventWatcher watcher = new ManagementEventWatcher(query);
+            watcher.EventArrived += new EventArrivedEventHandler(watcher_EventArrived);
+            watcher.Start();
+            Debug.WriteLine("Event watcher has been started ...");
+            //Console.ReadLine();
+            //watcher.Stop();
+        }
+
+        static void watcher_EventArrived(object sender, EventArrivedEventArgs e)
+        {
+            string instanceName = ((ManagementBaseObject)e.NewEvent["TargetInstance"])["Name"].ToString().ToLower();
+            switch(instanceName)
+            {
+                case "cmd.exe":
+                    Debug.WriteLine("Command prompt has been started ...");
+                    break;
+                case "eventvwr.msc":
+                    Debug.WriteLine("Event viewer has been started ...");
+                    break;
+                case "mmc.exe":
+                    Debug.WriteLine("Management console has been started ...");
+                    break;
+                default:
+                    break;
+            }
+            Debug.WriteLine(instanceName);
         }
     }
 }
