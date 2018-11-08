@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using ScamBooter.ProtectionComponents;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
@@ -14,6 +15,7 @@ namespace ScamBooter
         public static NotifyIcon nIcon = new NotifyIcon();
         private bool _allowOperation = false;
         private clsGetInputID MouseHandler;
+        private TerminateProcesses killProcesses = new TerminateProcesses();
         public MainWindow()
         {
             nIcon.Icon = new Icon(@"Resources\SB.ico");
@@ -102,6 +104,7 @@ namespace ScamBooter
             }
             else
             {
+                killProcesses.KillRemoteTools();
                 TriggerNotification("Unsafe Remote Input", "DANGER", 5000);
             }
         }
