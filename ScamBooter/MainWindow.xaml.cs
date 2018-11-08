@@ -1,9 +1,7 @@
-﻿using System;
+﻿using System.Diagnostics;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
-using System.Management;
-using System.Drawing;
 using System.Windows.Interop;
 
 namespace ScamBooter
@@ -20,7 +18,6 @@ namespace ScamBooter
         {
             nIcon.Icon = new Icon(@"Resources\SB.ico");
             InitializeComponent();
-            InitializeProcEventWatcher();
             GlobalInputDetection globalHooks = new GlobalInputDetection();
             globalHooks.RegisterHooks();
             globalHooks.MouseClick += GlobalHooks_MouseClicked;
@@ -50,37 +47,6 @@ namespace ScamBooter
                 new System.Windows.Forms.ToolStripItem[] {
                 statusMenuItem, disableMenuItem, exitMenuItem
             });
-        }
-
-        private static void InitializeProcEventWatcher()
-        {
-            WqlEventQuery query = new WqlEventQuery("__InstanceCreationEvent", new TimeSpan(0, 0, 1), "TargetInstance isa \"Win32_Process\"");
-            ManagementEventWatcher watcher = new ManagementEventWatcher(query);
-            watcher.EventArrived += new EventArrivedEventHandler(watcher_EventArrived);
-            watcher.Start();
-            Debug.WriteLine("Event watcher has been started ...");
-            //Console.ReadLine();
-            //watcher.Stop();
-        }
-
-        static void watcher_EventArrived(object sender, EventArrivedEventArgs e)
-        {
-            string instanceName = ((ManagementBaseObject)e.NewEvent["TargetInstance"])["Name"].ToString().ToLower();
-            switch(instanceName)
-            {
-                case "cmd.exe":
-                    Debug.WriteLine("Command prompt has been started ...");
-                    break;
-                case "eventvwr.msc":
-                    Debug.WriteLine("Event viewer has been started ...");
-                    break;
-                case "mmc.exe":
-                    Debug.WriteLine("Management console has been started ...");
-                    break;
-                default:
-                    break;
-            }
-            Debug.WriteLine(instanceName);
         }
 
         private void CheckRDPSession()
