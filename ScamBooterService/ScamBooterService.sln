@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScamBooterService", "ScamBooterService\ScamBooterService.csproj", "{BB27701D-433F-4DE1-8369-A92808DE5038}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB27701D-433F-4DE1-8369-A92808DE5038}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB27701D-433F-4DE1-8369-A92808DE5038}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB27701D-433F-4DE1-8369-A92808DE5038}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB27701D-433F-4DE1-8369-A92808DE5038}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {169B53E8-B71B-49B0-87FB-C9FB538E1F0D}
+	EndGlobalSection
+EndGlobal
