@@ -133,7 +133,29 @@ We constructed a test suite that contains various forms of unique and documented
 % 3. Explain which principles of designing secure systems have been employed by your design.
 %===============================================================================================================
 
+\subsection{Detecting a remote connection}
+%===============================
+Detecting an active remote desktop connection is not as trivial as checking a flag. For Windows, that is only possible if the application is using the Microsoft Remote Desktop Protocol, which operates on specific ports. However, the remote desktop applications used by technical support scammers typically establish connections on port 80 and 443, the standard ports used by web clients to communicate with a machine. Also, these ports are only used to establish a connection, the resulting port is not the same for each session as it is assigned by the machine serving the desktop. Other non-standard ports are used by remote desktop applications, but they differ between software, they may not be documented, or the ports they use will change depending on network conditions. Such a moving target will result in a high rate of false-positives. Instead of analysing network traffic, our application analyses raw input data using the Windows Desktop API \cite {b4}. Every time a mouse click occurs, regardless of the application in focus, our application will check whether a handler to the device is provided in the raw input header. If so, it is a local device that is attached to the computer. If no handler is provided, it is an input made from an active remote connection to the computer. Using this method, we can distinguish between clicks from a locally connected mouse and clicks from a remote desktop application.
 
+\subsection{Detect the use of administrative tools}
+%===============================
+
+\subsection{Analysing keystrokes}
+%===============================
+To improve the accuracy of detecting a scam in progress, we log keystrokes when the Windows Command Prompt is in focus. Scammers frequently execute certain commands to trick the user into believing that there is malware on their computer. 40\% of scammers employ a “Fake CMD scan” by running a command to list the tree of files, folders, and subfolders at a certain path \cite[p.7]{b2}. Our application will capture keystrokes that occur while the command prompt is outputting information. We will look for common words and phrases typed in such as “Virus detected”. We employ this strategy because users are often tricked into believing that the system produced the output not knowing that user inputs are displayed after a command is done executing. To capture keystrokes we use a global hook open source library that will allow our application to learn about keystrokes regardless of the application in focus \cite {b5}.
+
+\subsection{Terminating remote access applications}
+%===============================
+A fail-safe strategy to terminate the connection between the user and the scammer is to stop all network traffic. However, this will affect all other applications that require network connectivity which arguably, makes our application appear to be malware. To prevent such degradation to the user experience, we terminate common remote desktop applications used by technical support scammers instead \cite[Fig 4]{b2}. Our application runs with elevated privileges to allow us to terminate remote access applications with elevated privileges and to counter process renaming done via a file rename. We access the file metadata to determine the original name of the application rather than relying solely on the process name.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[keepaspectratio=true, scale = 0.22]{RemoteTools.png}}
+\caption{Remote access tools used by technical support scammers.}
+\label{fig 4}
+\end{figure}
+
+\subsection{Self restarting}
+%===============================
 
 \section{System Prototype} % 15%
 %================================================================================================================
@@ -190,6 +212,8 @@ We constructed a test suite that contains various forms of unique and documented
 \bibitem{b1}  Federal Bureau of Investigation, ``TECH SUPPORT FRAUD'',  https://www.ic3.gov/media/2018/180328, Mar. 28, 2018 [Oct. 6 2018]
 \bibitem{b2} N. Miramirkhani, O. Starov, and N. Nikiforakis, “Dial One for Scam: A Large-Scale Analysis of Technical Support Scams,” in Proceedings 2017 Network and Distributed System Security Symposium, 2017
 \bibitem{b3} Erik Wahlstrom, ``Teaming up in the war on tech support scams'', https://cloudblogs.microsoft.com/microsoftsecure/2018/04/20/teaming-up-in-the-war-on-tech-support-scams/, April 20, 2018 [Oct. 6 2018]
+\bibitem{b4}"C\# Get Mouse handle (GetRawInputDeviceInfo)", Stack Overflow, 2018. [Online]. Available: https://stackoverflow.com/questions/14584280/c-sharp-get-mouse-handle-getrawinputdeviceinfo. [Accessed: 09- Nov- 2018].
+\bibitem{b5}"rvknth043/Global-Low-Level-Key-Board-And-Mouse-Hook", GitHub, 2018. [Online]. Available: https://github.com/rvknth043/Global-Low-Level-Key-Board-And-Mouse-Hook. [Accessed: 09- Nov- 2018].
 \bibliographystyle{IEEEtran}
 \end{thebibliography}
 
