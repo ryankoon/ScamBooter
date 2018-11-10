@@ -141,6 +141,7 @@ Detecting an active remote desktop connection is not as trivial as checking a fl
 
 \subsection{Detect the use of administrative tools}
 %===============================
+As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to netstat.exe and 40\% calls to commond prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI ( Windows Management Instrumentation ) event handler to receive notifications of the start of a process \cite{b6}. We check if the launched process includes services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe.  
 
 \subsection{Analysing keystrokes}
 %===============================
@@ -216,6 +217,7 @@ A fail-safe strategy to terminate the connection between the user and the scamme
 \bibitem{b3} Erik Wahlstrom, ``Teaming up in the war on tech support scams'', https://cloudblogs.microsoft.com/microsoftsecure/2018/04/20/teaming-up-in-the-war-on-tech-support-scams/, April 20, 2018 [Oct. 6 2018]
 \bibitem{b4}"C\# Get Mouse handle (GetRawInputDeviceInfo)", Stack Overflow, 2018. [Online]. Available: https://stackoverflow.com/questions/14584280/c-sharp-get-mouse-handle-getrawinputdeviceinfo. [Accessed: 09- Nov- 2018].
 \bibitem{b5}"rvknth043/Global-Low-Level-Key-Board-And-Mouse-Hook", GitHub, 2018. [Online]. Available: https://github.com/rvknth043/Global-Low-Level-Key-Board-And-Mouse-Hook. [Accessed: 09- Nov- 2018].
+\bibitem{b6}"Receiving a WMI Event", Microsoft, 2018. [Online]. Available: https://docs.microsoft.com/en-us/windows/desktop/WmiSdk/receiving-a-wmi-event\#event-consumers. [Accessed: 09- Nov- 2018].
 \bibliographystyle{IEEEtran}
 \end{thebibliography}
 
