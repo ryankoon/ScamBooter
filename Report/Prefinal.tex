@@ -7,6 +7,7 @@
 \usepackage{xcolor}
 \usepackage{datetime}
 \usepackage{seqsplit}
+\usepackage{hyperref}
 
 \graphicspath{{./images/}}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -71,7 +72,7 @@ A study \cite{b2} conducted in 2014 discovered 1,688,412 unique visitors to scam
 \end{figure}
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[keepaspectratio=true, scale = 0.28]{timeandstress.png}}
+\centerline{\includegraphics[keepaspectratio=true, scale = 0.25]{timeandstress.png}}
 \caption{Time spent fixing computer and stress levels}
 \label{fig3}
 \end{figure}
@@ -119,6 +120,7 @@ We assessed the effectiveness of our solution based on the number of detected pr
 
 \subsection{List of Contributions}
 %===============================
+Our source code has been made public on \href{https://github.com/ryankoon/ScamBooter}{\textit{GitHub}} so anyone can build upon, improve, or use parts of our solution.
 
 
 \section{Related Work} % 5%
@@ -126,8 +128,6 @@ We assessed the effectiveness of our solution based on the number of detected pr
 % This section should explain what others, particularly as reported in academic literature, have done designing systems similar to the one designed by your team.
 %================================================================================================================
 Besides the large scale analysis conducted by researchers from Stony Brook University, there has not been any new academic studies in this area \cite{b2}. However, there has been widespread media coverage of call centre raids \cite{b6}. In fact, the increased in usage of pop-up ad-blockers potentially reduced the likelihood  of preventing exposure to scam websites, one of the entryways into a technical support scam \cite{b7}. Microsoft's Digital Crimes Unit has continued to conduct investigations, collect evidence, and work with law enforcement to combat technical support scams. This year, google has started restricting ads that claim to provide technical support services by starting a verification program to ensure that only legitimate third-party technical support providers are using their advertising platform \cite{b8}. Scammers are developing new ways trick people in making a payment and certainly more effort has been put into blocking websites and ads. However, analysing user behaviour as the last line of defense is not seen in products for the mass market. This could be due to resource limitations of most consumer computers to be able to provide detailed and accurate analysis as well as privacy concerns. The best solution is providing user education on this issue and there are plenty resources on such scams and many others \cite{b10}. The problem is being able to reach out to those that will benefit from the information.
-
-
 
 
 \section{Adversary Model} % 9%
@@ -171,15 +171,13 @@ Stopping all network traffic would be a fail-safe strategy to terminate the conn
 \label{fig 4}
 \end{figure}
 
-\subsection{Self restarting}
-%===============================
-
 \subsection{Principles of design}
 %===============================
 We applied the following principles to our system design.
 \begin{itemize}
-  \item\textit{Psychological Acceptability.} It is easy for users to install and start our system. Our system shows messages that inform users about potential scam activities. 
-  \item\textit{Defense in Depth.} By implementing a Windows service program that launches on startup and restarts our application program, we prevented our application from being terminated by scammers. This added a layer to protect the system. 
+  \item\textit{ Psychological Acceptability.} It is easy for users to install and start our system. Our system shows messages that inform users about potential scam activities. 
+  \item\textit{ Defense in Depth.} By implementing a Windows service program that launches on startup and restarts our application program, we prevented our application from being terminated by scammers. Our solution by itself is an extra layer of defence for the system in stopping scammers from communicating with users.
+  \item\textit{ Open Design.} We made our source code public on GitHub so that it is available for anyone to evaluate and make more robust. With the rapidly changing threat environment, this will allow us to be more informed about changes to be made increase our system's effectiveness.
 \end{itemize}
 %===============================
 
