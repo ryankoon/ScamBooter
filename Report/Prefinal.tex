@@ -134,13 +134,13 @@ Besides the large scale analysis conducted by researchers from Stony Brook Unive
 %================================================================================================================
 % Describe the adversary model that your design is intended to resist.
 %================================================================================================================
-Although there are various techniques that are used by technical support scammers, we developed a generalized model by analyzing the patterns of technical support scams. This model facilitated our understanding of the problem and helped us to design our system.
+We developed an adversary model by analyzing patterns of technical support scams. This model facilitated our understanding of the problem and helped us to design our system.
 \subsection{Objectives}
-The objective of the adversaries is to convince the victim that their computer is infected by a virus. After gaining the trust of the victim, the adversaries make the victim to pay them for fixing non-existent problems. The adversaries are scammers who want to make profits by deceiving inexperienced Windows users.
+The adversaries are scammers who profit off of inexperienced Windows users. The objective of the adversaries is to convince the victims that their computer is infected by virus. After gaining the victims' trust, the adversaries force them to pay to fix non-existent problems. 
 \subsection{Initial capabilities}
-The adversaries can call users, claiming to be from well-known companies. The adversaries can also set up malicious websites or advertisements that tell the user to call technical support numbers. 
+The adversaries can call users, pretending to be from well-known tech companies. The adversaries can also set up malicious websites or advertisements to trick the user into calling fradulent technical support numbers. 
 \subsection{Capabilities during the attack}
-The adversaries ask a user to download remote access software and gain access to their computer. They can open administrative tools to show system "errors", which are logs of normal operation. They can install malwares on the user's machine, causing the machine crash.
+The adversaries ask the user to download remote access software and gain access to their computer. They can open administrative tools to show system "errors", which are actually logs of normal operation. They can install malware on the user's computer, causing the system to crash.
 
 \section{System Design} % 20%
 %================================================================================================================
@@ -155,7 +155,7 @@ Detecting an active remote desktop connection is not as trivial as checking a fl
 
 \subsection{Detect the use of administrative tools}
 %===============================
-As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications of the start of a process \cite{b9}. We check if the launched processes include services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe. We assume users who have extensive knowledge of windows administrative programs are not susceptible to technical support scams. The use of particular administrative programs for a typical user would be an abnormal. 
+As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during attacks. 67\% of scammers use services.exe to show the users a list of stopped services, and a large portion uses Event Viewer, Netstat, Command Prompt, or a combination thereof. Since the calls to these tools are closely related to scams in progress, we decided to monitor the use of these administrative tools. In order to accomplish this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications from the start of a process \cite{b9}. The application checks if the launched processes include services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe.
 
 \subsection{Analysing keystrokes}
 %===============================
