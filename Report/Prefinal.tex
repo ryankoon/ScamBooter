@@ -190,13 +190,27 @@ The role of the service is to prevent the application from being terminated. It 
 \subsection{Evaluation Methodology}
 %===============================
 
+We determined a list of success criteria for our program: Fraud rate, insult rate, Psychological acceptability.
+
+To assess fraud rate of programs we run the entire list of windows administrative tools and popular remote connection software (seem in Fig. 4) against our program. The target fraud rate is 0 where our program detects each item on the list.
+
+Based on our threat model, users who can trigger our detection system on their own have enough technical knowledge to be safe from technical support scams. Therefore, the insult rate for programs will not be a significant metric in our evaluation. 
+
+However, our program also performs key logging to check it for intrusion.
+To assess the fraud rate of the key logger, we will test it against strings of input known to be part of a scam.
+To assess the insult rate for our key logger, we will test it against harmless common text found in online databases such as books, blogs, as well as random generated text.
+
+A limitation of our design is that our detection works based on the signatures of programs. The program can only correctly identify software that is known to be used in combination for software scams. Therefore, we will not evaluate unknown programs, and expect signature updates to patch breaches using unknown programs.
+
+One other important metric is Psychological acceptability: Users should not be aware of our program running in the background.
+The assess this criteria, we ran the program, and check these places for traces of the program running: Task Bar, application switch window, timeline, action center, and program icons. Eliminating traces from these menus render our program invisible, and only seem as a background process.
 
 
-%\subsection{Discussion} % 10%
+%\subsection{Results of the Evaluation} % 10%
 %===============================
 %%Only for the final Report
 
-%\subsection{Discussion} % 10%
+%\subsection{Discussion of the Evaluation Results} % 10%
 %===============================
 %%Only for the final Report
 
