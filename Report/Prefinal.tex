@@ -152,7 +152,7 @@ Detecting an active remote desktop connection is not as trivial as checking a fl
 
 \subsection{Detect the use of administrative tools}
 %===============================
-As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during attacks. 67\% of scammers use services.exe to show the users a list of stopped services, and a large portion of scammers use Event Viewer, Netstat, Command Prompt, or a combination thereof. Since the calls to these tools are closely related to scams in progress, we decided to monitor the use of these administrative tools. In order to accomplish this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications from the start of a process \cite{b9}. The application checks if the launched processes include services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe.
+As illustrated in \cite[Fig 2]{b2}, scammers use specific Windows programs during attacks. 67\% of scammers use services.exe to show the users a list of stopped services, and a large portion of scammers use Event Viewer, Netstat, Command Prompt, or a combination thereof. Since the calls to these tools are closely related to scams in progress, we decided to monitor the use of these administrative tools. In order to accomplish this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications from the start of a process \cite{b9}. The application checks if the launched processes include services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe.
 
 \subsection{Analysing keystrokes}
 %===============================
