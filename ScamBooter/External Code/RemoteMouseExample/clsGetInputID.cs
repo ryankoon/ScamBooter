@@ -6,6 +6,7 @@ using System.Windows.Interop;
 
 namespace ScamBooter
 {
+    /// Attribution: https://github.com/andrewdwalker/RemoteMouseExample
     /// <summary>
     /// Taken from: http://stackoverflow.com/questions/14584280/c-sharp-get-mouse-handle-getrawinputdeviceinfo
     /// Minor modifications by Andrew D. Walker
