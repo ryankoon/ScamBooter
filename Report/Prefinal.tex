@@ -153,7 +153,7 @@ Detecting an active remote desktop connection is not as trivial as checking a fl
 
 \subsection{Detect the use of administrative tools}
 %===============================
-As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications of the start of a process \cite{b9}. We check if the launched process includes services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe. We assume users who have extensive knowledge of windows administrative programs are not susceptible to technical support scams. The use of particular administrative programs for a typical user would be an abnormal. 
+As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications of the start of a process \cite{b9}. We check if the launched processes include services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe. We assume users who have extensive knowledge of windows administrative programs are not susceptible to technical support scams. The use of particular administrative programs for a typical user would be an abnormal. 
 
 \subsection{Analysing keystrokes}
 %===============================
@@ -176,8 +176,8 @@ Stopping all network traffic would be a fail-safe strategy to terminate the conn
 %===============================
 We applied the following principles to our system design.
 \begin{itemize}
-  \item\textbf{ Psychological Acceptability.} It is easy for users to install and start our system. Our system shows messages that inform users about potential scam activities. 
-  \item\textbf{ Defense in Depth.} By implementing a Windows service program that launches on startup and restarts our application program, we prevented our application from being terminated by scammers. This added a layer to protect the system. 
+  \item\textit{Psychological Acceptability.} It is easy for users to install and start our system. Our system shows messages that inform users about potential scam activities. 
+  \item\textit{Defense in Depth.} By implementing a Windows service program that launches on startup and restarts our application program, we prevented our application from being terminated by scammers. This added a layer to protect the system. 
 \end{itemize}
 %===============================
 
@@ -188,11 +188,11 @@ We applied the following principles to our system design.
 Our prototype consists of (1) a Windows application that detects suspicious activities and (2) a Windows service that manages the lifecycle of the application. We developed two programs using C\# and .NET framework. 
 
 \subsection{Windows application}
-The application is responsible for detecting and terminating potential technical scam activities. It monitors the launched processes including event viewer and command prompt and detects remote connections using raw mouse input. Based on these two factors, the application predicts if there is a possible scam activity and notifies users.\\
-In extreme cases, our application terminates remote connections by disconnecting user computer from the Internet for a short period of time. It displays a message to explain the reason for disabling the Internet and direct users to to reputable page about tech scams.
+The application is responsible for detecting and terminating potential technical scam activities. It monitors the launched processes and detects remote connections using raw mouse input and keystrokes. Based on these two factors, the application predicts if there is a possible scam activity and notifies users.\\
+In extreme cases, our application terminates remote connections by disconnecting user computer from the Internet for a short period of time. It displays a message that explains the reason for disabling the Internet and directs users to to reputable page about tech scams.
 
 \subsection{Windows service}
-The role of the service is to prevent the application from being terminated. It checks the list of running processes at a set interval and restarts ScamBooter if the application is not running.
+The role of the service is to prevent the application from being terminated. It checks the list of running processes at a set interval and restarts the application program if the application is has stopped running.
 
 \section{Evaluation} % 26%
 %================================================================================================================
