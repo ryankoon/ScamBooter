@@ -182,11 +182,11 @@ We applied the following principles to our system design.
 %================================================================================================================
 % Explain the details of the prototype of your approach. This is the prototype that is used for evaluating your approach.
 %================================================================================================================
-Our prototype consists primarily of a Windows application that detects suspicious activities and a complementing Windows service that manages the life cycle of the application. We developed two programs using C\# and .NET framework. 
+Our prototype consists primarily of a Windows application that detects suspicious activity and a complementary Windows service that manages the life cycle of the application. We developed the two programs using C\# and .NET framework. 
 
 \subsection{Windows application}
-The application is responsible for detecting and terminating potential technical scam activities. It monitors the launched processes and detects remote connections using raw mouse input and keystrokes. Based on these two factors, the application determines if there is possible scam activity and notifies users.\\
-In extreme cases, our application terminates remote connections by disconnecting user computer from the Internet for a short period of time. It displays a message that explains the reason for disabling the Internet and directs users to a page about techical support scams.
+The application is responsible for detecting and terminating potential technical scam activities. It monitors launched processes and detects remote connections using raw mouse input and keystrokes. Based on these two factors, the application predicts if there is possibly a scam and notifies the user.\\
+In extreme cases, our application terminates remote connections by disconnecting the computer from the Internet for a short period of time. It then displays a message to explain the reason for disabling the Internet and re-directs users to a reputable page about techical support scams.
 
 \subsection{Windows service}
 The role of the service is to prevent the application from being terminated. It checks the list of running processes at a set interval and restarts the application program if the application has stopped running.
