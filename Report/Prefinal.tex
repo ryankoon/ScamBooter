@@ -149,7 +149,7 @@ Detecting an active remote desktop connection is not as trivial as checking a fl
 
 \subsection{Detect the use of administrative tools}
 %===============================
-As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications of the start of a process \cite{b9}. We check if the launched process includes services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe.  
+As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications of the start of a process \cite{b9}. We check if the launched process includes services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe. We assume users who have extensive knowledge of windows administrative programs are not susceptible to technical support scams. The use of particular administrative programs for a typical user would be an abnormal. 
 
 \subsection{Analysing keystrokes}
 %===============================
@@ -166,6 +166,15 @@ Stopping all network traffic would be a fail-safe strategy to terminate the conn
 \end{figure}
 
 \subsection{Self restarting}
+%===============================
+
+\subsection{Principles of design}
+%===============================
+We applied the following principles to our system design.
+\begin{itemize}
+  \item\textbf{ Psychological Acceptability.} It is easy for users to install and start our system. Our system shows messages that inform users about potential scam activities. 
+  \item\textbf{ Defense in Depth.} By implementing a Windows service program that launches on startup and restarts our application program, we prevented our application from being terminated by scammers. This added a layer to protect the system. 
+\end{itemize}
 %===============================
 
 \section{System Prototype} % 15%
