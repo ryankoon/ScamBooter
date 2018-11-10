@@ -104,7 +104,9 @@ ROBOVIC, short for Robotic Victim, was a tool created in a study that collected 
 
 \subsection{Summary of the Methodology}
 %===============================
-We constructed a test suite that contains various forms of unique and documented technical support scams. For each scam, we made many similar attacks against a system protected by our solution. We assessed the effectiveness of our solution based on the number of detected attacks in the test suite.
+To test our detection rate, we compiled a suite of known remote connection programs and known windows administrative tools.
+For testing key logging We constructed a test suite that contains various forms of malicious strings and harmless strings.
+We assessed the effectiveness of our solution based on the number of detected processes or strings in the test suite.
 
 %\subsection{Summary of Evaluation Results}
 %===============================
@@ -153,7 +155,7 @@ Detecting an active remote desktop connection is not as trivial as checking a fl
 
 \subsection{Detect the use of administrative tools}
 %===============================
-As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications of the start of a process \cite{b9}. We check if the launched process includes services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe. We assume users who have extensive knowledge of windows administrative programs are not susceptible to technical support scams. The use of particular administrative programs for a typical user would be an abnormal. 
+As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications of the start of a process \cite{b9}. We check if the launched processes include services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe. We assume users who have extensive knowledge of windows administrative programs are not susceptible to technical support scams. The use of particular administrative programs for a typical user would be an abnormal. 
 
 \subsection{Analysing keystrokes}
 %===============================
@@ -176,9 +178,9 @@ Stopping all network traffic would be a fail-safe strategy to terminate the conn
 %===============================
 We applied the following principles to our system design.
 \begin{itemize}
-  \item\textbf{ Psychological Acceptability.} It is easy for users to install and start our system. Our system shows messages that inform users about potential scam activities. 
-  \item\textbf{ Defense in Depth.} By implementing a Windows service program that launches on startup and restarts our application program, we prevented our application from being terminated by scammers. Our solution by itself is an extra layer of defence for the system in stopping scammers from communicating with users.
-  \item\textbf{ Open Design.} We made our source code public on GitHub so that it is available for anyone to evaluate and make more robust. With the rapidly changing threat environment, this will allow us to be more informed about changes to be made increase our system's effectiveness.
+  \item\textit{ Psychological Acceptability.} It is easy for users to install and start our system. Our system shows messages that inform users about potential scam activities. 
+  \item\textit{ Defense in Depth.} By implementing a Windows service program that launches on startup and restarts our application program, we prevented our application from being terminated by scammers. Our solution by itself is an extra layer of defence for the system in stopping scammers from communicating with users.
+  \item\textit{ Open Design.} We made our source code public on GitHub so that it is available for anyone to evaluate and make more robust. With the rapidly changing threat environment, this will allow us to be more informed about changes to be made increase our system's effectiveness.
 \end{itemize}
 %===============================
 
@@ -189,11 +191,11 @@ We applied the following principles to our system design.
 Our prototype consists of (1) a Windows application that detects suspicious activities and (2) a Windows service that manages the lifecycle of the application. We developed two programs using C\# and .NET framework. 
 
 \subsection{Windows application}
-The application is responsible for detecting and terminating potential technical scam activities. It monitors the launched processes including event viewer and command prompt and detects remote connections using raw mouse input. Based on these two factors, the application predicts if there is a possible scam activity and notifies users.\\
-In extreme cases, our application terminates remote connections by disconnecting user computer from the Internet for a short period of time. It displays a message to explain the reason for disabling the Internet and direct users to to reputable page about tech scams.
+The application is responsible for detecting and terminating potential technical scam activities. It monitors the launched processes and detects remote connections using raw mouse input and keystrokes. Based on these two factors, the application predicts if there is a possible scam activity and notifies users.\\
+In extreme cases, our application terminates remote connections by disconnecting user computer from the Internet for a short period of time. It displays a message that explains the reason for disabling the Internet and directs users to to reputable page about techical support scams.
 
 \subsection{Windows service}
-The role of the service is to prevent the application from being terminated. It checks the list of running processes at a set interval and restarts ScamBooter if the application is not running.
+The role of the service is to prevent the application from being terminated. It checks the list of running processes at a set interval and restarts the application program if the application is has stopped running.
 
 \section{Evaluation} % 26%
 %================================================================================================================
@@ -212,13 +214,27 @@ The role of the service is to prevent the application from being terminated. It 
 \subsection{Evaluation Methodology}
 %===============================
 
+We determined a list of success criteria for our program: Fraud rate, insult rate, Psychological acceptability.
+
+To assess fraud rate of programs we run the entire list of windows administrative tools and popular remote connection software (seem in Fig. 4) against our program. The target fraud rate is 0 where our program detects each item on the list.
+
+Based on our threat model, users who can trigger our detection system on their own have enough technical knowledge to be safe from technical support scams. Therefore, the insult rate for programs will not be a significant metric in our evaluation. 
+
+However, our program also performs key logging to check it for intrusion.
+To assess the fraud rate of the key logger, we will test it against strings of input known to be part of a scam.
+To assess the insult rate for our key logger, we will test it against harmless common text found in online databases such as books, blogs, as well as random generated text.
+
+A limitation of our design is that our detection works based on the signatures of programs. The program can only correctly identify software that is known to be used in combination for software scams. Therefore, we will not evaluate unknown programs, and expect signature updates to patch breaches using unknown programs.
+
+One other important metric is Psychological acceptability: Users should not be aware of our program running in the background.
+The assess this criteria, we ran the program, and check these places for traces of the program running: Task Bar, application switch window, timeline, action center, and program icons. Eliminating traces from these menus render our program invisible, and only seem as a background process.
 
 
-%\subsection{Discussion} % 10%
+%\subsection{Results of the Evaluation} % 10%
 %===============================
 %%Only for the final Report
 
-%\subsection{Discussion} % 10%
+%\subsection{Discussion of the Evaluation Results} % 10%
 %===============================
 %%Only for the final Report
 
