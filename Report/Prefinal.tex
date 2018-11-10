@@ -141,7 +141,7 @@ Detecting an active remote desktop connection is not as trivial as checking a fl
 
 \subsection{Detect the use of administrative tools}
 %===============================
-As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to netstat.exe and 40\% calls to commond prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI ( Windows Management Instrumentation ) event handler to receive notifications of the start of a process \cite{b6}. We check if the launched process includes services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe.  
+As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI ( Windows Management Instrumentation ) event handler to receive notifications of the start of a process \cite{b6}. We check if the launched process includes services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe.  
 
 \subsection{Analysing keystrokes}
 %===============================
@@ -164,6 +164,14 @@ A fail-safe strategy to terminate the connection between the user and the scamme
 %================================================================================================================
 % Explain the details of the prototype of your approach. This is the prototype that is used for evaluating your approach.
 %================================================================================================================
+Our prototype consists of (1) a Windows application that detects suspicious activities and (2) a Windows service that manages the lifecycle of the application. We developed two programs using C\# and .NET framework. 
+
+\subsection{Windows application}
+The application is responsible for detecting and terminating potential technical scam activities. It monitors the launched processes including event viewer and command prompt and detects remote connections using raw mouse input. Based on these two factors, the application predicts if there is a possible scam activity and notifies users.\\
+In extreme cases, our application terminates remote connections by disconnecting user computer from the Internet for a short period of time. It displays a message to explain the reason for disabling the Internet and direct users to to reputable page about tech scams.
+
+\subsection{Windows service}
+The role of the service is to prevent the application from being terminated. It checks the list of running processes at a set interval and restarts scambooter program if the application is not running.
 
 \section{Evaluation} % 26%
 %================================================================================================================
