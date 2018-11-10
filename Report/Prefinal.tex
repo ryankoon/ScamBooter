@@ -7,6 +7,7 @@
 \usepackage{xcolor}
 \usepackage{datetime}
 \usepackage{seqsplit}
+\usepackage{hyperref}
 
 \graphicspath{{./images/}}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -71,7 +72,7 @@ A study \cite{b2} conducted in 2014 discovered 1,688,412 unique visitors to scam
 \end{figure}
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[keepaspectratio=true, scale = 0.28]{timeandstress.png}}
+\centerline{\includegraphics[keepaspectratio=true, scale = 0.25]{timeandstress.png}}
 \caption{Time spent fixing computer and stress levels}
 \label{fig3}
 \end{figure}
@@ -117,6 +118,7 @@ We assessed the effectiveness of our solution based on the total fraud and insul
 
 \subsection{List of Contributions}
 %===============================
+Our source code has been made public on \href{https://github.com/ryankoon/ScamBooter}{\textit{GitHub}} so anyone can build upon, improve, or use parts of our solution.
 
 
 \section{Related Work} % 5%
@@ -126,19 +128,21 @@ We assessed the effectiveness of our solution based on the total fraud and insul
 Besides the large scale analysis conducted by researchers from Stony Brook University, there has not been any new academic studies in this area \cite{b2}. However, there has been widespread media coverage of call center raids \cite{b6}. In fact, the increased usage of pop-up ad-blockers potentially reduced the likelihood  of preventing exposure to scam websites, which was one of the entryways into a technical support scam \cite{b7}. Microsoft's Digital Crimes Unit has continued to conduct investigations, collect evidence, and work with law enforcement to combat technical support scams. This year, google has started restricting ads that claim to provide technical support services by starting a verification program to ensure that only legitimate third-party technical support providers are using their advertising platform \cite{b8}. Scammers are developing new ways trick people in making a payment and certainly more effort has been put into blocking websites and ads. However, analyzing user behavior as the last line of defense is not seen in products for the mass market. This could be due to resource limitations of most consumer computers to be able to provide detailed and accurate analysis as well as privacy concerns. The best solution is providing user education on this issue and there are plenty resources on such scams and many others \cite{b10}. The problem is being able to reach out to those that will benefit from the information.
 
 
-
-
 \section{Adversary Model} % 9%
 %================================================================================================================
 % Describe the adversary model that your design is intended to resist.
 %================================================================================================================
-Although there are various techniques that are used by technical support scammers, we developed a generalized model by analyzing the patterns of technical support scams. This model facilitated our understanding of the problem and helped us to design our system.
+We developed an adversary model by analyzing patterns of technical support scams. This model facilitated our understanding of the problem and helped us to design our system.
 \subsection{Objectives}
-The objective of the adversaries is to convince the victim that their computer is infected by a virus. After gaining the trust of the victim, the adversaries make the victim to pay them for fixing non-existent problems. The adversaries are scammers who want to make profits by deceiving inexperienced Windows users.
+The adversaries are scammers who profit off of inexperienced Windows users. The objective of the adversaries is to convince the victims that their computer is infected by virus. After gaining the victims' trust, the adversaries force them to pay to fix non-existent problems. 
 \subsection{Initial capabilities}
-The adversaries can call users, claiming to be from well-known companies. The adversaries can also set up malicious websites or advertisements that tell the user to call technical support numbers. 
+The adversaries can call users, pretending to be from well-known tech companies. The adversaries can also set up malicious websites or advertisements to trick the user into calling fradulent technical support numbers. 
 \subsection{Capabilities during the attack}
+<<<<<<< HEAD
 The adversaries ask a user to download remote access software and gain access to their computer. They can open administrative tools to show system "errors", which are logs of normal operation. They can also install malware on the user's machine, causing the machine crash.
+=======
+The adversaries ask the user to download remote access software and gain access to their computer. They can open administrative tools to show system "errors", which are actually logs of normal operation. They can install malware on the user's computer, causing the system to crash.
+>>>>>>> 3ecf3806864fa20bf79b79fd7eac477b5fd5b66b
 
 \section{System Design} % 20%
 %================================================================================================================
@@ -153,7 +157,7 @@ Detecting an active remote desktop connection is not as trivial as checking a fl
 
 \subsection{Detect the use of administrative tools}
 %===============================
-As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications of the start of a process \cite{b9}. We check if the launched process includes services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe. We assume users who have extensive knowledge of windows administrative programs are not susceptible to technical support scams. The use of particular administrative programs for a typical user would be an abnormal.
+As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during attacks. 67\% of scammers use services.exe to show the users a list of stopped services, and a large portion of scammers use Event Viewer, Netstat, Command Prompt, or a combination thereof. Since the calls to these tools are closely related to scams in progress, we decided to monitor the use of these administrative tools. In order to accomplish this, our application registers a WMI (Windows Management Instrumentation) event handler to receive notifications from the start of a process \cite{b9}. The application checks if the launched processes include services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe.
 
 \subsection{Analysing keystrokes}
 %===============================
@@ -169,15 +173,13 @@ Stopping all network traffic would be a fail-safe strategy to terminate the conn
 \label{fig 4}
 \end{figure}
 
-\subsection{Self restarting}
-%===============================
-
 \subsection{Principles of design}
 %===============================
 We applied the following principles to our system design.
 \begin{itemize}
-  \item\textbf{ Psychological Acceptability.} It is easy for users to install and start our system. Our system shows messages that inform users about potential scam activities. 
-  \item\textbf{ Defense in Depth.} By implementing a Windows service program that launches on startup and restarts our application program, we prevented our application from being terminated by scammers. This added a layer to protect the system. 
+  \item\textit{ Psychological Acceptability.} It is easy for users to install and start our system. Our system shows messages that inform users about potential scam activities. 
+  \item\textit{ Defense in Depth.} By implementing a Windows service program that launches on startup and restarts our application program, we prevented our application from being terminated by scammers. Our solution by itself is an extra layer of defence for the system in stopping scammers from communicating with users.
+  \item\textit{ Open Design.} We made our source code public on GitHub so that it is available for anyone to evaluate and make more robust. With the rapidly changing threat environment, this will allow us to be more informed about changes to be made increase our system's effectiveness.
 \end{itemize}
 %===============================
 
@@ -188,11 +190,11 @@ We applied the following principles to our system design.
 Our prototype consists primarily of a Windows application that detects suspicious activities and a complementing Windows service that manages the life cycle of the application. We developed two programs using C\# and .NET framework. 
 
 \subsection{Windows application}
-The application is responsible for detecting and terminating potential technical scam activities. It monitors the launched processes including event viewer and command prompt and detects remote connections using raw mouse input. Based on these two factors, the application predicts if there is a possible scam activity and notifies users.\\
-In extreme cases, our application terminates remote connections by disconnecting user computer from the Internet for a short period of time. It displays a message to explain the reason for disabling the Internet and direct users to to reputable page about tech scams.
+The application is responsible for detecting and terminating potential technical scam activities. It monitors the launched processes and detects remote connections using raw mouse input and keystrokes. Based on these two factors, the application predicts if there is a possible scam activity and notifies users.\\
+In extreme cases, our application terminates remote connections by disconnecting user computer from the Internet for a short period of time. It displays a message that explains the reason for disabling the Internet and directs users to to reputable page about techical support scams.
 
 \subsection{Windows service}
-The role of the service is to prevent the application from being terminated. It checks the list of running processes at a set interval and restarts ScamBooter if the application is not running.
+The role of the service is to prevent the application from being terminated. It checks the list of running processes at a set interval and restarts the application program if the application is has stopped running.
 
 \section{Evaluation} % 26%
 %================================================================================================================
