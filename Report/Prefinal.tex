@@ -120,12 +120,13 @@ Besides the large scale analysis conducted by researchers from Stony Brook Unive
 %================================================================================================================
 % Describe the adversary model that your design is intended to resist.
 %================================================================================================================
+Although there are various techiniques that are used by technical support scammers, we developed a generalized model by analyzing the patterns of technical support scams. This model facilitated our understanding of the problem and helped us to design our system.
 \subsection{Objectives}
-The objectives of the adversaries is to convince the victim that their computer is infected by viruses. After gaining the trust of the victim, the adversaries make the victim to pay them for fixing the non-existent problems. 
+The objective of the adversaries is to convince the victim that their computer is infected by a virus. After gaining the trust of the victim, the adversaries make the victim to pay them for fixing non-existent problems. The adversaries are scammers who want to make profits by deceiving inexperienced Windows users.
 \subsection{Initial capabilities}
-There are various patterns of technique support scams. Most commonly, the adversaries call users, usuallt claiming to be from well-known companies and set up malicious websites or advertisement that tell the user to call technical support numbers. 
+The adversaries can call users, claiming to be from well-known companies. The adversaries can also set up malicious websites or advertisements that tell the user to call technical support numbers. 
 \subsection{Capabilities during the attack}
-The adversaries ask users to download remote access software and connect to their computers. They are able to open administrative tools to show system "warnings". They can install malwares on user machines, which can cause user machines to crash and monitor and control user activities.
+The adversaries ask a user to download remote access software and gain access to their computer. They can open administrative tools to show system "errors", which are logs of normal operation. They can install malwares on the user's machine, causing the machine crash.
 
 \section{System Design} % 20%
 %================================================================================================================
@@ -140,6 +141,7 @@ Detecting an active remote desktop connection is not as trivial as checking a fl
 
 \subsection{Detect the use of administrative tools}
 %===============================
+As illustrated in \cite[Fig 2]{b2}., scammers use specific Windows programs during an attack. 67\% of scammers start services.exe to show users a list of stopped services. 52\% calls to Event Viewer, 40\% calls to Netstat and 40\% calls to Command Prompt. Since the calls to these tools are closely related to a scam in progress, we decided to monitoring the use of these administrative tools. To implement this, our application registers a WMI ( Windows Management Instrumentation ) event handler to receive notifications of the start of a process \cite{b9}. We check if the launched process includes services.exe, eventvmr.exe, mmc.exe, cmd.exe or netstat.exe.  
 
 \subsection{Analysing keystrokes}
 %===============================
@@ -162,6 +164,14 @@ A fail-safe strategy to terminate the connection between the user and the scamme
 %================================================================================================================
 % Explain the details of the prototype of your approach. This is the prototype that is used for evaluating your approach.
 %================================================================================================================
+Our prototype consists of (1) a Windows application that detects suspicious activities and (2) a Windows service that manages the lifecycle of the application. We developed two programs using C\# and .NET framework. 
+
+\subsection{Windows application}
+The application is responsible for detecting and terminating potential technical scam activities. It monitors the launched processes including event viewer and command prompt and detects remote connections using raw mouse input. Based on these two factors, the application predicts if there is a possible scam activity and notifies users.\\
+In extreme cases, our application terminates remote connections by disconnecting user computer from the Internet for a short period of time. It displays a message to explain the reason for disabling the Internet and direct users to to reputable page about tech scams.
+
+\subsection{Windows service}
+The role of the service is to prevent the application from being terminated. It checks the list of running processes at a set interval and restarts scambooter program if the application is not running.
 
 \section{Evaluation} % 26%
 %================================================================================================================
@@ -213,11 +223,14 @@ A fail-safe strategy to terminate the connection between the user and the scamme
 \bibitem{b1} Federal Bureau of Investigation, ``TECH SUPPORT FRAUD'',  https://www.ic3.gov/media/2018/180328, Mar. 28, 2018 [Oct. 6 2018]
 \bibitem{b2} N. Miramirkhani, O. Starov, and N. Nikiforakis, “Dial One for Scam: A Large-Scale Analysis of Technical Support Scams,” in Proceedings 2017 Network and Distributed System Security Symposium, 2017
 \bibitem{b3} Erik Wahlstrom, ``Teaming up in the war on tech support scams'', https://cloudblogs.microsoft.com/microsoftsecure/2018/04/20/teaming-up-in-the-war-on-tech-support-scams/, April 20, 2018 [Oct. 6 2018]
+\bibitem{b4}"C\# Get Mouse handle (GetRawInputDeviceInfo)", Stack Overflow, 2018. [Online]. Available: https://stackoverflow.com/questions/14584280/c-sharp-get-mouse-handle-getrawinputdeviceinfo. [Accessed: 09- Nov- 2018].
+\bibitem{b5}"rvknth043/Global-Low-Level-Key-Board-And-Mouse-Hook", GitHub, 2018. [Online]. Available: https://github.com/rvknth043/Global-Low-Level-Key-Board-And-Mouse-Hook. [Accessed: 09- Nov- 2018].
 \bibitem{b4}"C\# Get Mouse handle (GetRawInputDeviceInfo)", Stack Overflow, 2018. [Online]. Available: https://stackoverflow.com/questions/14584280/c-sharp-get-mouse-handle-getrawinputdeviceinfo. [Nov. 5 2018]
 \bibitem{b5}"rvknth043/Global-Low-Level-Key-Board-And-Mouse-Hook", GitHub, 2018. [Online]. Available: https://github.com/rvknth043/Global-Low-Level-Key-Board-And-Mouse-Hook. [Nov. 5 2018]
 \bibitem{b6} S. Chabba, “Indian Fake Call Centers Scam Americans Of Millions Of Dollars, 70 Suspects Arrested,” International Business Times, 06-Oct-2016. [Online]. Available: https://www.ibtimes.com/indian-fake-call-centers-scam-americans-millions-dollars-70-suspects-arrested-2427340. [Nov. 9 2018]
 \bibitem{b7} Microsoft and TRG, ``Global Tech Support Scam Research - Global Summary, September 2018'',  https://news.microsoft.com/uploads/prod/sites/358/2018/10/Global-Results-Tech-Support-Scam-Research-2018.pdf, Sept. 2018 [Nov. 9 2018]
 \bibitem{b8} D. Graff, ``Restricting ads in third-party tech support services", Google, 2018. [Online]. Available: https://www.blog.google/products/ads/restricting-ads-third-party-tech-support-services. [Nov. 10 2018]
+\bibitem{b9}"Receiving a WMI Event", Microsoft, 2018. [Online]. Available: https://docs.microsoft.com/en-us/windows/desktop/WmiSdk/receiving-a-wmi-event\#event-consumers. [Accessed: 09- Nov- 2018].
 \bibliographystyle{IEEEtran}
 \end{thebibliography}
 
