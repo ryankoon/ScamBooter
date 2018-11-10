@@ -26,7 +26,11 @@ Vancouver, Canada
 
 % The abstract should summarize the problem addressed, methodology, results, conclusions, and contributions.
 \begin{abstract}
+Technical support scams have been a growing issue as more financial losses have been reported year after year. Software companies like Microsoft and Google have been improving their software security and processes to block malicious websites as well as working with law enforcement to tackle the issue. There is no perfect solution and user education is the most effective provided that the information reaches those that will benefit from it. Therefore, to provide an extra line of defense, we created ScamBooter to detect remote connections and analyse interactions with administrative applications on Windows. If malicious behaviour is detected, we attempt to terminate the user’s connection with the scammer and provide details about the scam so that the user is better equipped to avoid falling for a technical support scam in the future. This further promotes user education of the issue.
+
+We built and tested our solution based on scenarios and statistics provided by a large-scale analysis conducted on technical support scams. Due the rapidly changing environment of cybercrime, we can only deem our solution as a part of a multi layer defense system. Ideally, our heuristics in detecting a scam and the implementation recover from from a scam would be used to enhance an existing security software solution or built into an operating system. Alternatively, operating systems can restrict access to adminstrative applications not often used by general users. In addition, they should provide descriptions in plain English on what the applications can and cannot do before allowing the user to enable them. However, we cannot expect a user to read the description and make the expected choices under the direction of a scammer. Therefore, automated solutions still has it place in protecting users.
 \end{abstract}
+
 
 \section{Introduction} % 10%
 %================================================================================================================
