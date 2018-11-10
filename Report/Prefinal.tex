@@ -185,7 +185,7 @@ We applied the following principles to our system design.
 Our prototype consists primarily of a Windows application that detects suspicious activity and a complementary Windows service that manages the life cycle of the application. We developed the two programs using C\# and .NET framework. 
 
 \subsection{Windows application}
-The application is responsible for detecting and terminating potential technical scam activities. It monitors launched processes and detects remote connections using raw mouse input and keystrokes. Based on these two factors, the application predicts if there is possiblily a scam and notifies the user.\\
+The application is responsible for detecting and terminating potential technical scam activities. It monitors launched processes and detects remote connections using raw mouse input and keystrokes. Based on these two factors, the application predicts if there is possibly a scam and notifies the user.\\
 In extreme cases, our application terminates remote connections by disconnecting the computer from the Internet for a short period of time. It then displays a message to explain the reason for disabling the Internet and re-directs users to a reputable page about techical support scams.
 
 \subsection{Windows service}
