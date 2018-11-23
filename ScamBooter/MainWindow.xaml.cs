@@ -27,8 +27,14 @@ namespace ScamBooter
             GlobalInputDetection globalHooks = new GlobalInputDetection();
             globalHooks.RegisterHooks();
             globalHooks.MouseClick += GlobalHooks_MouseClicked;
+            globalHooks.SuspiciousInput += GlobalHooks_SuspiciousInput;
             CheckRDPSession();
             Automation.AddAutomationFocusChangedEventHandler(RunningProcessDetection.OnFocusChangedHandler);
+        }
+
+        private void GlobalHooks_SuspiciousInput(object sender, GlobalInputDetection.SuspiciousInputArgs e)
+        {
+            Debug.Print("Detected suspicious input: " + e.matcherFound);
         }
 
         private void GlobalHooks_MouseClicked(object sender, System.EventArgs e)
