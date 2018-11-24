@@ -42,7 +42,7 @@ namespace ScamBooter
         private void RiskAssessor_RiskThresholdReached(object sender, EventArgs e)
         {
             killProcesses.KillRemoteTools();
-            TriggerNotification("Tech Support Scam Detected", "Certified technicians will not make unsolicited calls or notifications about your computer health.", 10000);
+            TriggerNotification("Tech Support Scam Detected", "Certified technicians do not make unsolicited calls or notifications about your computer's health.", 10000);
             LaunchBrowser.Launch_Browser(); // Direct user to Microsoft's page about technical support scams
         }
 

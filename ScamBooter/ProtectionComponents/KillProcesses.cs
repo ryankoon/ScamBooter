@@ -12,7 +12,7 @@ namespace ScamBooter.ProtectionComponents
         string[] processNames;
         public TerminateProcesses()
         {
-            processNames = new string[] { "teamviewer", "logmein", "citrix", "gotoassist", "anydesk", "ammy", "supremohelper", "supremo" };
+            processNames = new string[] { "teamviewer", "logmein", "citrix", "gotoassist", "anydesk", "ammy", "supremohelper", "supremo", "cmd" };
         }
 
         public void KillRemoteTools()

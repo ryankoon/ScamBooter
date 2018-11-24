@@ -115,7 +115,6 @@ namespace ScamBooter
 
         private void KeyboardHook_KeyUp(KeyboardHook.VKeys key)
         {
-            Debug.Print(currentWindowFocus.ToString());
             if (currentWindowFocus != RunningProcessDetection.ProcessEvents.OTHER_FOCUS)
             {
                 if (key.ToString() == "OEM_2")
@@ -130,7 +129,7 @@ namespace ScamBooter
                 }
             } else
             {
-                Debug.Print("Keylogging analysis skipped for non-targetted windows.");
+                //Debug.Print("Keylogging analysis skipped for non-targetted windows.");
             }
 
         }

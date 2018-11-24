@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ScamBooter.ProtectionComponents
@@ -14,7 +15,8 @@ namespace ScamBooter.ProtectionComponents
         readonly int RiskThreshold = 100;
         RunningProcessDetection.ProcessEvents currentWindowFocus = RunningProcessDetection.ProcessEvents.OTHER_FOCUS; 
 
-        HashSet<EventRisk> CurrentRisks = new HashSet<EventRisk>();
+        HashSet<EventRisk> DetectedRisks = new HashSet<EventRisk>();
+        private static Mutex mutex = new Mutex();
 
         public enum EventRisk
         {
@@ -85,17 +87,25 @@ namespace ScamBooter.ProtectionComponents
             return args.ProcessEvent.Equals(processEvent);
         }
 
-        private void addAndAssessRisks(EventRisk risk)
+        private void addAndAssessRisks(EventRisk newRisk)
         {
-            CurrentRisks.Add(risk);
-            Debug.Print("Risk Added: " + risk.ToString());
+            mutex.WaitOne();
+
+            DetectedRisks.Add(newRisk);
+            Debug.Print("Risk Added: " + newRisk.ToString());
+            Debug.Print("Current Risks: ");
 
             //Calculate risk score
             int riskScore = 0;
-            foreach (EventRisk currentRisk in CurrentRisks)
+            foreach (EventRisk detectedRisk in DetectedRisks)
             {
-                riskScore += EventRiskScores[risk];
+                riskScore += EventRiskScores[detectedRisk];
+                Debug.Print(detectedRisk.ToString() + " " + "+" + EventRiskScores[detectedRisk].ToString());
             }
+
+            mutex.ReleaseMutex();
+
+            Debug.Print("------------------");
             Debug.Print("Current Risk Score: " + riskScore.ToString());
 
             //Check if threshold reached
