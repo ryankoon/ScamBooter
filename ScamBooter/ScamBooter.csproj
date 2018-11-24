@@ -70,6 +70,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -80,10 +82,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DetectionComponents\GlobalInputDetection.cs" />
+    <Compile Include="DetectionComponents\RunningProcessDetection.cs" />
     <Compile Include="Libraries\Global-Low-Level-Key-Board-And-Mouse-Hook\KeyboardHook.cs" />
     <Compile Include="Libraries\Global-Low-Level-Key-Board-And-Mouse-Hook\MouseHook.cs" />
     <Compile Include="DetectionComponents\RemoteConnectionDetection.cs" />
     <Compile Include="ProtectionComponents\KillProcesses.cs" />
+    <Compile Include="ProtectionComponents\LaunchBrowser.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
