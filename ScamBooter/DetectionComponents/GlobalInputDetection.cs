@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Windows;
 
 namespace ScamBooter
 {
@@ -94,7 +95,13 @@ namespace ScamBooter
 
         public bool checkMatcher(string matchString)
         {
-            bool result =  keyInputsString.Contains(matchString);
+            string clipboardText = "";
+            if (Clipboard.ContainsText(TextDataFormat.Text))
+            {
+                clipboardText = Clipboard.GetText(TextDataFormat.Text);
+            }
+
+            bool result = keyInputsString.Contains(matchString) || clipboardText.Contains(matchString);
             if (result)
             {
                 matcherDetectionHistory.Add(matchString);
@@ -135,7 +142,6 @@ namespace ScamBooter
                         keyInputsString = keyInputsString.Remove(keyInputsString.Length - 1);
                     }
                 }
-                Debug.Print(keyInputsString);
             } else
             {
                 //Debug.Print("Keylogging analysis skipped for non-targetted windows.");
@@ -151,7 +157,5 @@ namespace ScamBooter
             mouseHook.Uninstall();
             Debug.Print("Uninstalled global hooks");
         }
-
-
     }
 }
