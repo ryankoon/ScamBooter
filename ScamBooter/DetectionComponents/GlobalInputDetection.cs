@@ -115,7 +115,8 @@ namespace ScamBooter
 
         private void KeyboardHook_KeyUp(KeyboardHook.VKeys key)
         {
-            if (currentWindowFocus != RunningProcessDetection.ProcessEvents.OTHER_FOCUS)
+            //Only detect keystrokes in command prompt
+            if (currentWindowFocus == RunningProcessDetection.ProcessEvents.CMD_WINDOW_FOCUS)
             {
                 if (key.ToString() == "OEM_2")
                 {
@@ -127,6 +128,14 @@ namespace ScamBooter
                     keyInputsString += key.ToString().ToLower().Substring(4);
                     checkBuiltInMatchers();
                 }
+                else if (key.ToString() == "BACK")
+                {
+                    if (keyInputsString.Length > 0)
+                    {
+                        keyInputsString = keyInputsString.Remove(keyInputsString.Length - 1);
+                    }
+                }
+                Debug.Print(keyInputsString);
             } else
             {
                 //Debug.Print("Keylogging analysis skipped for non-targetted windows.");
