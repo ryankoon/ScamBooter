@@ -51,16 +51,21 @@ namespace ScamBooter
             {
                 // To disable user unhandled expection when debugging 
                 // https://stackoverflow.com/questions/16970642/visual-studio-not-breaking-on-user-unhandled-exceptions
-
-                string name = element.Current.Name;
-                int processId = element.Current.ProcessId;
-                using (Process process = Process.GetProcessById(processId))
+                try
                 {
-                    if (process.ProcessName == "cmd" && name == "Command Prompt")
-                        Debug.WriteLine("Command Prompt is in focus.");
-                    else if (process.ProcessName == "explorer" && (name == "Open:" || name == "Cancel" || name == "Browse..." || name == "OK"))
-                        Debug.WriteLine("Run Window is in focus.");
+                    string name = element.Current.Name;
+                    int processId = element.Current.ProcessId;
+                    using (Process process = Process.GetProcessById(processId))
+                    {
+                        if (process.ProcessName == "cmd" && name == "Command Prompt")
+                            Debug.WriteLine("Command Prompt is in focus.");
+                        else if (process.ProcessName == "explorer" && (name == "Open:" || name == "Cancel" || name == "Browse..." || name == "OK"))
+                            Debug.WriteLine("Run Window is in focus.");
                         //Console.WriteLine("Name: {0}, ProcessName: {1} is in focus", name, process.ProcessName);
+                    }
+                }catch(System.Windows.Automation.ElementNotAvailableException)
+                {
+                    Debug.Write("The target element corresponds to UI that is no longer available.");
                 }
             }
         }
