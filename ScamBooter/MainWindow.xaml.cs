@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Management;
 using System.Windows.Automation;
+using System.Runtime.InteropServices;
 
 namespace ScamBooter
 {
@@ -15,26 +16,34 @@ namespace ScamBooter
     /// </summary>
     public partial class MainWindow : Window
     {
+        private clsGetInputID MouseHandler;
+        GlobalInputDetection globalHooks;
+        RiskAssessor riskAssessor;
         public static NotifyIcon nIcon = new NotifyIcon();
         private bool _allowOperation = false;
-        private clsGetInputID MouseHandler;
         private TerminateProcesses killProcesses = new TerminateProcesses();
         public MainWindow()
         {
             nIcon.Icon = new Icon(@"Resources\SB.ico");
             InitializeComponent();
+
             RunningProcessDetection.InitializeProcEventWatcher();
-            GlobalInputDetection globalHooks = new GlobalInputDetection();
+
+            globalHooks = new GlobalInputDetection();
+            riskAssessor = new RiskAssessor(globalHooks);
+            riskAssessor.RiskThresholdReached += RiskAssessor_RiskThresholdReached;
+
             globalHooks.RegisterHooks();
-            globalHooks.MouseClick += GlobalHooks_MouseClicked;
-            globalHooks.SuspiciousInput += GlobalHooks_SuspiciousInput;
+
             CheckRDPSession();
             Automation.AddAutomationFocusChangedEventHandler(RunningProcessDetection.OnFocusChangedHandler);
         }
 
-        private void GlobalHooks_SuspiciousInput(object sender, GlobalInputDetection.SuspiciousInputArgs e)
+        private void RiskAssessor_RiskThresholdReached(object sender, EventArgs e)
         {
-            Debug.Print("Detected suspicious input: " + e.matcherFound);
+            killProcesses.KillRemoteTools();
+            TriggerNotification("Tech Support Scam Detected", "Certified technicians will not make unsolicited calls or notifications about your computer health.", 10000);
+            LaunchBrowser.Launch_Browser(); // Direct user to Microsoft's page about technical support scams
         }
 
         private void GlobalHooks_MouseClicked(object sender, System.EventArgs e)
@@ -69,7 +78,7 @@ namespace ScamBooter
 
             if (isRemoteConnection)
             {
-                TriggerNotification("Remote Connection Detected", "unsafe", 5000);
+                riskAssessor.addRemoteConnectionRisk();
             }
             else
             {
@@ -79,6 +88,16 @@ namespace ScamBooter
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            //Hide from task switcher
+            WindowInteropHelper wndHelper = new WindowInteropHelper(this);
+
+            int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
+
+            exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
+            SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
+
+            //Initialize remote clicks detection
+            globalHooks.MouseClick += GlobalHooks_MouseClicked;
             MouseHandler = new clsGetInputID(new WindowInteropHelper(this).Handle);
             ComponentDispatcher.ThreadFilterMessage += ComponentDispatcher_ThreadFilterMessage;
         }
@@ -111,14 +130,77 @@ namespace ScamBooter
         {
             if (_allowOperation)
             {
-                Debug.Print("Local Input");
+                //Debug.Print("Local Input");
             }
             else
             {
-                killProcesses.KillRemoteTools();
-                TriggerNotification("Unsafe Remote Input", "DANGER", 5000);
-                LaunchBrowser.Launch_Browser(); // direct user to page about technical support scam
+                riskAssessor.addRemoteConnectionRisk();
             }
         }
+
+
+        // Taken from https://stackoverflow.com/questions/357076/best-way-to-hide-a-window-from-the-alt-tab-program-switcher
+        #region Hide From task Switcher (PInvoke)
+        [Flags]
+        public enum ExtendedWindowStyles
+        {
+            // ...
+            WS_EX_TOOLWINDOW = 0x00000080,
+            // ...
+        }
+
+        public enum GetWindowLongFields
+        {
+            // ...
+            GWL_EXSTYLE = (-20),
+            // ...
+        }
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
+
+        public static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            int error = 0;
+            IntPtr result = IntPtr.Zero;
+            // Win32 SetWindowLong doesn't clear error on success
+            SetLastError(0);
+
+            if (IntPtr.Size == 4)
+            {
+                // use SetWindowLong
+                Int32 tempResult = IntSetWindowLong(hWnd, nIndex, IntPtrToInt32(dwNewLong));
+                error = Marshal.GetLastWin32Error();
+                result = new IntPtr(tempResult);
+            }
+            else
+            {
+                // use SetWindowLongPtr
+                result = IntSetWindowLongPtr(hWnd, nIndex, dwNewLong);
+                error = Marshal.GetLastWin32Error();
+            }
+
+            if ((result == IntPtr.Zero) && (error != 0))
+            {
+                throw new System.ComponentModel.Win32Exception(error);
+            }
+
+            return result;
+        }
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr", SetLastError = true)]
+        private static extern IntPtr IntSetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong", SetLastError = true)]
+        private static extern Int32 IntSetWindowLong(IntPtr hWnd, int nIndex, Int32 dwNewLong);
+
+        private static int IntPtrToInt32(IntPtr intPtr)
+        {
+            return unchecked((int)intPtr.ToInt64());
+        }
+
+        [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
+        public static extern void SetLastError(int dwErrorCode);
+        #endregion
     }
 }

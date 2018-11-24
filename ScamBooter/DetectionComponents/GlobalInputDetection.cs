@@ -15,6 +15,7 @@ namespace ScamBooter
 
         MouseHook mouseHook;
         KeyboardHook keyboardHook;
+        RunningProcessDetection.ProcessEvents currentWindowFocus = RunningProcessDetection.ProcessEvents.OTHER_FOCUS;
 
         string keyInputsString = "";
         readonly ArrayList matchers = new ArrayList {
@@ -37,6 +38,26 @@ namespace ScamBooter
         {
             mouseHook = new MouseHook();
             keyboardHook = new KeyboardHook();
+
+            RunningProcessDetection.ProcessEvent += RunningProcessDetection_ProcessEvent; ;
+        }
+
+        private void RunningProcessDetection_ProcessEvent(object sender, RunningProcessDetection.ProcessEventArgs e)
+        {
+            if (isWindowFocusEvent(e))
+            {
+                currentWindowFocus = e.ProcessEvent;
+            }
+        }
+
+        private bool isWindowFocusEvent(RunningProcessDetection.ProcessEventArgs e)
+        {
+            return isProcessEvent(e, RunningProcessDetection.ProcessEvents.CMD_WINDOW_FOCUS) || isProcessEvent(e, RunningProcessDetection.ProcessEvents.RUN_WINDOW_FOCUS) || isProcessEvent(e, RunningProcessDetection.ProcessEvents.OTHER_FOCUS);
+        }
+
+        private bool isProcessEvent(RunningProcessDetection.ProcessEventArgs args, RunningProcessDetection.ProcessEvents processEvent)
+        {
+            return args.ProcessEvent.Equals(processEvent);
         }
         //Create the Mouse Hook
 
@@ -94,14 +115,22 @@ namespace ScamBooter
 
         private void KeyboardHook_KeyUp(KeyboardHook.VKeys key)
         {
-            if (key.ToString() == "OEM_2") {
-                keyInputsString += "/";
-                checkBuiltInMatchers();
-            }
-            else if (key.ToString() != "SPACE" && key.ToString() != "RETURN")
+            Debug.Print(currentWindowFocus.ToString());
+            if (currentWindowFocus != RunningProcessDetection.ProcessEvents.OTHER_FOCUS)
             {
-                keyInputsString += key.ToString().ToLower().Substring(4);
-                checkBuiltInMatchers();
+                if (key.ToString() == "OEM_2")
+                {
+                    keyInputsString += "/";
+                    checkBuiltInMatchers();
+                }
+                else if (key.ToString().Contains("KEY_"))
+                {
+                    keyInputsString += key.ToString().ToLower().Substring(4);
+                    checkBuiltInMatchers();
+                }
+            } else
+            {
+                Debug.Print("Keylogging analysis skipped for non-targetted windows.");
             }
 
         }

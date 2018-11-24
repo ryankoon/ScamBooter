@@ -7,6 +7,22 @@ namespace ScamBooter
 {
     public class RunningProcessDetection
     {
+        public class ProcessEventArgs : EventArgs
+        {
+            public ProcessEvents ProcessEvent { get; set; }
+        }
+
+        public static event EventHandler<ProcessEventArgs> ProcessEvent;
+
+        public enum ProcessEvents {
+            CMD_PROCESS,
+            MANAGEMENT_CONSOLE_PROCESS,
+            NETSTAT_PROCESS,
+            CMD_WINDOW_FOCUS,
+            RUN_WINDOW_FOCUS,
+            OTHER_FOCUS // Unfocused from targeted windows
+        };
+
         public RunningProcessDetection() { }
 
         public static void InitializeProcEventWatcher()
@@ -24,15 +40,18 @@ namespace ScamBooter
             switch (instanceName)
             {
                 case "cmd.exe":
+                    ProcessEvent?.Invoke(null, new ProcessEventArgs { ProcessEvent = ProcessEvents.CMD_PROCESS });
                     Debug.WriteLine("Command prompt has been started ...");
                     break;
                 //case "eventvwr.msc":
                 //    Debug.WriteLine("Event viewer has been started ...");
                 //    break;
                 case "mmc.exe":
+                    ProcessEvent?.Invoke(null, new ProcessEventArgs { ProcessEvent = ProcessEvents.MANAGEMENT_CONSOLE_PROCESS });
                     Debug.WriteLine("Management console has been started ...");
                     break;
                 case "netstat.exe":
+                    ProcessEvent?.Invoke(null, new ProcessEventArgs { ProcessEvent = ProcessEvents.NETSTAT_PROCESS });
                     Debug.WriteLine("Netstat has been started ...");
                     break;
                 // case "services.exe":
@@ -57,17 +76,28 @@ namespace ScamBooter
                     int processId = element.Current.ProcessId;
                     using (Process process = Process.GetProcessById(processId))
                     {
-                        if (process.ProcessName == "cmd" && name == "Command Prompt")
+                        if ((process.ProcessName == "cmd" || process.ProcessName == "conhost") && name.Contains("Command Prompt"))
+                        {
+                            ProcessEvent?.Invoke(null, new ProcessEventArgs { ProcessEvent = ProcessEvents.CMD_WINDOW_FOCUS });
                             Debug.WriteLine("Command Prompt is in focus.");
+                        }
                         else if (process.ProcessName == "explorer" && (name == "Open:" || name == "Cancel" || name == "Browse..." || name == "OK"))
+                        {
+                            ProcessEvent?.Invoke(null, new ProcessEventArgs { ProcessEvent = ProcessEvents.RUN_WINDOW_FOCUS });
                             Debug.WriteLine("Run Window is in focus.");
-                        //Console.WriteLine("Name: {0}, ProcessName: {1} is in focus", name, process.ProcessName);
+                            //Console.WriteLine("Name: {0}, ProcessName: {1} is in focus", name, process.ProcessName);
+                        } else
+                        {
+                            ProcessEvent?.Invoke(null, new ProcessEventArgs { ProcessEvent = ProcessEvents.OTHER_FOCUS });
+                        }
                     }
-                }catch(System.Windows.Automation.ElementNotAvailableException)
+                }
+                catch (System.Windows.Automation.ElementNotAvailableException)
                 {
                     Debug.Write("The target element corresponds to UI that is no longer available.");
                 }
             }
         }
+
     }
 }

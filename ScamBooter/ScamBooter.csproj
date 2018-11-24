@@ -88,6 +88,7 @@
     <Compile Include="DetectionComponents\RemoteConnectionDetection.cs" />
     <Compile Include="ProtectionComponents\KillProcesses.cs" />
     <Compile Include="ProtectionComponents\LaunchBrowser.cs" />
+    <Compile Include="ProtectionComponents\RiskAssessor.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
