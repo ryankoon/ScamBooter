@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ScamBooter.ProtectionComponents
 {
-    class RiskAssessor
+    public class RiskAssessor
     {
         public event EventHandler RiskThresholdReached;
         readonly int RiskThreshold = 100;
@@ -62,9 +62,9 @@ namespace ScamBooter.ProtectionComponents
             }
         }
 
-        public void addRemoteConnectionRisk()
+        public bool addRemoteConnectionRisk()
         {
-            addAndAssessRisks(EventRisk.REMOTE_CONNECTION);
+            return addAndAssessRisks(EventRisk.REMOTE_CONNECTION);
         }
 
         private void RunningProcessDetection_ProcessEvent(object sender, RunningProcessDetection.ProcessEventArgs e)
@@ -87,7 +87,31 @@ namespace ScamBooter.ProtectionComponents
             return args.ProcessEvent.Equals(processEvent);
         }
 
-        private void addAndAssessRisks(EventRisk newRisk)
+        public bool addAndAssessRisks(EventRisk newRisk)
+        {
+            AddRisk(newRisk);
+
+            //Calculate risk score
+            int riskScore = calculateRiskScore();
+
+            //Check if threshold reached
+           return isThresholdReached(riskScore);
+
+        }
+
+        public bool isThresholdReached(int riskScore)
+        {
+            bool result = false;
+            if (riskScore >= RiskThreshold)
+            {
+                RiskThresholdReached?.Invoke(this, new EventArgs { });
+                Debug.Print("Risk threshold reached: " + RiskThreshold.ToString());
+                result = true;
+            }
+            return result;
+        }
+
+        public void AddRisk(EventRisk newRisk)
         {
             mutex.WaitOne();
 
@@ -95,7 +119,13 @@ namespace ScamBooter.ProtectionComponents
             Debug.Print("Risk Added: " + newRisk.ToString());
             Debug.Print("Current Risks: ");
 
-            //Calculate risk score
+            mutex.ReleaseMutex();
+        }
+
+        public int calculateRiskScore()
+        {
+            mutex.WaitOne();
+
             int riskScore = 0;
             foreach (EventRisk detectedRisk in DetectedRisks)
             {
@@ -107,14 +137,7 @@ namespace ScamBooter.ProtectionComponents
 
             Debug.Print("------------------");
             Debug.Print("Current Risk Score: " + riskScore.ToString());
-
-            //Check if threshold reached
-            if (riskScore >= RiskThreshold)
-            {
-                RiskThresholdReached?.Invoke(this, new EventArgs { });
-                Debug.Print("Risk threshold reached: " + RiskThreshold.ToString());
-            }
-           
+            return riskScore;
         }
     }
 }
