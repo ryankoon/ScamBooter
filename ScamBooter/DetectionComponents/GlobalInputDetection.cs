@@ -11,7 +11,7 @@ namespace ScamBooter
 
         public class SuspiciousInputArgs : EventArgs
         {
-            public string matcherFound { get; set; }
+            public virtual string matcherFound { get; set; }
         }
 
         MouseHook mouseHook;

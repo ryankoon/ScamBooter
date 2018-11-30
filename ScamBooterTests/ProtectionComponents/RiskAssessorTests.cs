@@ -128,5 +128,27 @@ namespace ScamBooter.ProtectionComponents.Tests
             RiskAssessor riskAssessor = new RiskAssessor(mockGlobalInputDetection.Object);
             return riskAssessor;
         }
+
+        [TestMethod()]
+        public void GlobalHooks_SuspiciousInputTest()
+        {
+            Mock<GlobalInputDetection> mockGlobalInputDetection = new Mock<GlobalInputDetection>();
+            Mock<GlobalInputDetection.SuspiciousInputArgs> mockSuspiciousInputArgs = new Mock<GlobalInputDetection.SuspiciousInputArgs>();
+            RiskAssessor riskAssessor = new RiskAssessor(mockGlobalInputDetection.Object);
+            
+            SetupAndAssertSuspiciousInput(mockSuspiciousInputArgs, riskAssessor, "dir/s", RiskAssessor.EventRisk.CMD_SCAN);
+            SetupAndAssertSuspiciousInput(mockSuspiciousInputArgs, riskAssessor, "tree", RiskAssessor.EventRisk.CMD_SCAN);
+            SetupAndAssertSuspiciousInput(mockSuspiciousInputArgs, riskAssessor, "iexplorer", RiskAssessor.EventRisk.RUN_IEXPLORER);
+            SetupAndAssertSuspiciousInput(mockSuspiciousInputArgs, riskAssessor, "virus", RiskAssessor.EventRisk.SUSPICIOUS_KEYBOARD_INPUT);
+        }
+
+        private static void SetupAndAssertSuspiciousInput(Mock<GlobalInputDetection.SuspiciousInputArgs> mockSuspiciousInputArgs, RiskAssessor riskAssessor, string mockArg, RiskAssessor.EventRisk eventRisk)
+        {
+            mockSuspiciousInputArgs.SetupGet(c => c.matcherFound).Returns(mockArg);
+            riskAssessor.GlobalHooks_SuspiciousInput(null, mockSuspiciousInputArgs.Object);
+
+            bool result = riskAssessor.GetDetectedRisks().Contains(eventRisk);
+            Assert.IsTrue(result);
+        }
     }
 }

@@ -110,6 +110,8 @@ namespace ScamBooter.ProtectionComponents
 
         }
 
+        //Taken from http://www.aboutmycode.com/net-framework/how-to-get-elevated-process-path-in-net/
+        //With a minor modification to return an empty string instead of an exception
         [Flags]
         private enum ProcessAccessFlags : uint
         {

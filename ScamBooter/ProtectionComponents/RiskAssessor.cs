@@ -47,7 +47,7 @@ namespace ScamBooter.ProtectionComponents
             globalHooks.SuspiciousInput += GlobalHooks_SuspiciousInput;
         }
 
-        private void GlobalHooks_SuspiciousInput(object sender, GlobalInputDetection.SuspiciousInputArgs e)
+        public void GlobalHooks_SuspiciousInput(object sender, GlobalInputDetection.SuspiciousInputArgs e)
         {
             if (e.matcherFound == "dir/s" || e.matcherFound == "tree")
             {
@@ -138,6 +138,11 @@ namespace ScamBooter.ProtectionComponents
             Debug.Print("------------------");
             Debug.Print("Current Risk Score: " + riskScore.ToString());
             return riskScore;
+        }
+
+        public HashSet<EventRisk> GetDetectedRisks()
+        {
+            return DetectedRisks;
         }
     }
 }
