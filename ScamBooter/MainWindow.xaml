@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="10" Width="10" 
         Loaded="Window_Loaded" Unloaded="Window_Unloaded"
-        Background="{x:Null}"
+        Background="{x:Null}" BorderBrush="Transparent"
          WindowStyle="None" ShowInTaskbar="False">
 </Window>
