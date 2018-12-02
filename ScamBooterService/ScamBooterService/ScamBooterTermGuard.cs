@@ -45,6 +45,7 @@ namespace ScamBooterService
             Process[] pname = Process.GetProcessesByName("ScamBooter");
             if (pname.Length == 0)
             {
+                System.IO.Directory.SetCurrentDirectory("C:\\Users\\zoyme\\AppData\\Local\\ScamBooter");
                 ProcessExtensions.StartProcessAsCurrentUser("C:\\Users\\zoyme\\AppData\\Local\\ScamBooter\\ScamBooter.exe");
                 ScamEventLog.WriteEntry("Process was terminated, restarting process", EventLogEntryType.Information, eventId++);
             }
