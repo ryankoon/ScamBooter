@@ -27,7 +27,8 @@ namespace ScamBooter.ProtectionComponents
             EVENT_VIEWER,
             SYSTEM_WINDOW,
             RUN_WINDOW,
-            RUN_IEXPLORER
+            RUN_IEXPLORER,
+            NETSTAT
         }
         public Dictionary<EventRisk, int> EventRiskScores = new Dictionary<EventRisk, int>()
         {
@@ -38,7 +39,8 @@ namespace ScamBooter.ProtectionComponents
             {EventRisk.EVENT_VIEWER, 30},
             {EventRisk.SYSTEM_WINDOW, 20},
             {EventRisk.RUN_WINDOW, 20},
-            {EventRisk.RUN_IEXPLORER, 20}
+            {EventRisk.RUN_IEXPLORER, 20},
+            {EventRisk.NETSTAT, 20}
         };
 
         public RiskAssessor(GlobalInputDetection globalHooks)
@@ -56,7 +58,8 @@ namespace ScamBooter.ProtectionComponents
             else if (e.matcherFound == "iexplorer")
             {
                 addAndAssessRisks(EventRisk.RUN_IEXPLORER);
-            } else
+            }
+            else
             {
                 addAndAssessRisks(EventRisk.SUSPICIOUS_KEYBOARD_INPUT);
             }
@@ -80,6 +83,10 @@ namespace ScamBooter.ProtectionComponents
             else if (isEventRisk(e, RunningProcessDetection.ProcessEvents.RUN_WINDOW_FOCUS))
             {
                 addAndAssessRisks(EventRisk.RUN_WINDOW);
+            }
+            else if (isEventRisk(e, RunningProcessDetection.ProcessEvents.NETSTAT_PROCESS))
+            {
+                addAndAssessRisks(EventRisk.NETSTAT);
             }
         }
 
